@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ultimate Timer App with Dark/Light Mode</title>
+<style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 30px 15px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    transition: background 0.5s ease, color 0.5s ease;
+  }
+
+  /* Light mode styles */
+  body.light-mode {
+    background: #f0f0f3;
+    color: #222;
+  }
+
+  h1, h2 {
+    margin: 0 0 10px 0;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+  }
+
+  h2 {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #ffd369;
+  }
+  body.light-mode h2 {
+    color: #ff8c00;
+  }
+
+  p.description {
+    margin: 0 0 20px 0;
+    font-size: 0.9rem;
+    color: #ddd;
+    max-width: 320px;
+  }
+  body.light-mode p.description {
+    color: #555;
+  }
+
+  .container {
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 20px;
+    padding: 30px 40px;
+    margin: 20px 0;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    transition: background 0.5s ease, color 0.5s ease;
+  }
+  body.light-mode .container {
+    background: #fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    color: #222;
+  }
+  .container:hover {
+    background: rgba(0, 0, 0, 0.6);
+  }
+  body.light-mode .container:hover {
+    background: #f5f5f5;
+  }
+
+  #clock, #stopwatch, #countdown {
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    user-select: none;
+  }
+  body.light-mode #clock,
+  body.light-mode #stopwatch,
+  body.light-mode #countdown {
+    color: #333;
+  }
+
+  /* Buttons */
+  .btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    background: linear-gradient(135deg, #ff8c00, #ffa500);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 140, 0, 0.6);
+    transition: all 0.3s ease;
+    user-select: none;
+    min-width: 100px;
+  }
+  button:hover, button:focus {
+    background: linear-gradient(135deg, #ffa500, #ffb733);
+    box-shadow: 0 6px 18px rgba(255, 165, 0, 0.8);
+    outline: none;
+    transform: translateY(-2px);
+  }
+  button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(255, 140, 0, 0.5);
+  }
+  body.light-mode button {
+    background: linear-gradient(135deg, #007acc, #3399ff);
+    box-shadow: 0 4px 12px rgba(51, 153, 255, 0.6);
+    color: white;
+  }
+  body.light-mode button:hover, body.light-mode button:focus {
+    background: linear-gradient(135deg, #3399ff, #66b3ff);
+    box-shadow: 0 6px 18px rgba(102, 179, 255, 0.8);
+  }
+  body.light-mode button:active {
+    box-shadow: 0 3px 8px rgba(51, 153, 255, 0.5);
+  }
+
+  /* Input */
+  input[type="number"] {
+    padding: 12px 15px;
+    font-size: 1.1rem;
+    width: 100px;
+    border-radius: 12px;
+    border: none;
+    text-align: center;
+    margin-right: 15px;
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.2);
+    transition: box-shadow 0.3s ease, background 0.5s ease, color 0.5s ease;
+    background: transparent;
+    color: white;
+  }
+  input[type="number"]:focus {
+    outline: none;
+    box-shadow: 0 0 12px #ffa500;
+  }
+  body.light-mode input[type="number"] {
+    background: #f0f0f3;
+    color: #222;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.1);
+  }
+  body.light-mode input[type="number"]:focus {
+    box-shadow: 0 0 12px #3399ff;
+  }
+
+  /* Dark/Light toggle button */
+  #themeToggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 30px;
+    width: 60px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 3px;
+    transition: background 0.3s ease, border-color 0.3s ease;
+    user-select: none;
+  }
+  #themeToggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  body.light-mode #themeToggle {
+    border-color: #333;
+  }
+  body.light-mode #themeToggle:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  #toggleCircle {
+    background: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+  }
+  body.light-mode #toggleCircle {
+    background: #007acc;
+    transform: translateX(30px);
+  }
+
+  /* Responsive */
+  @media (max-width: 450px) {
+    .container {
+      max-width: 90vw;
+      padding: 25px 20px;
+    }
+    #clock, #stopwatch, #countdown {
+      font-size: 2.5rem;
+    }
+    button {
+      min-width: 80px;
+      padding: 10px 18px;
+      font-size: 1rem;
+    }
+    input[type="number"] {
+      width: 80px;
+      font-size: 1rem;
+      margin-right: 10px;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Dark/Light Mode Toggle -->
+  <button id="themeToggle" aria-label="Toggle Dark/Light Mode" title="Toggle Dark/Light Mode">
+    <div id="toggleCircle"></div>
+  </button>
+
+  <!-- Digital Clock -->
+  <section class="container" aria-label="Digital Clock">
+    <h2>Digital Clock</h2>
+    <p class="description">Current local time displayed in hours, minutes, and seconds.</p>
+    <div id="clock" aria-live="polite" aria-atomic="true">00:00:00</div>
+  </section>
+
+  <!-- Stopwatch -->
+  <section class="container" aria-label="Stopwatch">
+    <h2>Stopwatch</h2>
+    <p class="description">Start, stop, and reset the stopwatch to measure elapsed time.</p>
+    <div id="stopwatch" aria-live="polite" aria-atomic="true">00:00:00</div>
+    <div class="btn-group">
+      <button id="startStopwatch" aria-label="Start Stopwatch">Start</button>
+      <button id="stopStopwatch" aria-label="Stop Stopwatch">Stop</button>
+      <button id="resetStopwatch" aria-label="Reset Stopwatch">Reset</button>
+    </div>
+  </section>
+
+  <!-- Countdown Timer -->
+  <section class="container" aria-label="Countdown Timer">
+    <h2>Countdown Timer</h2>
+    <p class="description">Set a timer in minutes and start the countdown.</p>
+    <div id="countdown" aria-live="polite" aria-atomic="true">00:00</div>
+    <div class="btn-group" style="justify-content: center; margin-top: 15px;">
+      <input type="number" id="minutesInput" placeholder="Minutes" min="1" aria-label="Minutes Input" />
+      <button id="startCountdown" aria-label="Start Countdown Timer">Start</button>
+    </div>
+  </section>
+
+<script>
+  // ---------------- Dark/Light Mode Toggle ----------------
+  const themeToggle = document.getElementById('themeToggle');
+  const body = document.body;
+
+  // Load saved theme from localStorage
+  if(localStorage.getItem('theme') === 'light') {
+    body.classList.add('light-mode');
+  }
+
+  themeToggle.addEventListener('click', () => {
+    body.classList.toggle('light-mode');
+    if(body.classList.contains('light-mode')) {
+      localStorage.setItem('theme', 'light');
+    } else {
+      localStorage.setItem('theme', 'dark');
+    }
+  });
+
+  // ---------------- Digital Clock ----------------
+  function updateClock() {
+    const now = new Date();
+    let h = now.getHours().toString().padStart(2,'0');
+    let m = now.getMinutes().toString().padStart(2,'0');
+    let s = now.getSeconds().toString().padStart(2,'0');
+    document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // ---------------- Stopwatch ----------------
+  let swHours = 0, swMinutes = 0, swSeconds = 0;
+  let swTimer, swRunning = false;
+
+  function updateStopwatch() {
+    swSeconds++;
+    if (swSeconds === 60) { swSeconds = 0; swMinutes++; }
+    if (swMinutes === 60) { swMinutes = 0; swHours++; }
+
+    document.getElementById('stopwatch').textContent =
+      `${swHours.toString().padStart(2,'0')}:${swMinutes.toString().padStart(2,'0')}:${swSeconds.toString().padStart(2,'0')}`;
+  }
+
+  document.getElementById('startStopwatch').onclick = () => {
+    if(!swRunning) {
+      swTimer = setInterval(updateStopwatch, 1000);
+      swRunning = true;
+    }
+  }
+  document.getElementById('stopStopwatch').onclick = () => {
+    clearInterval(swTimer);
+    swRunning = false;
+  }
+  document.getElementById('resetStopwatch').onclick = () => {
+    clearInterval(swTimer);
+    swRunning = false;
+    swHours = 0; swMinutes = 0; swSeconds = 0;
+    document.getElementById('stopwatch').textContent = '00:00:00';
+  }
+
+  // ---------------- Countdown Timer ----------------
+  let countdownTimer;
+  document.getElementById('startCountdown').onclick = () => {
+    let minutes = parseInt(document.getElementById('minutesInput').value);
+    if(isNaN(minutes) || minutes <= 0){
+      alert('Please enter a valid positive number of minutes.');
+      return;
+    }
+    let timeLeft = minutes * 60;
+    clearInterval(countdownTimer);
+
+    function updateCountdown() {
+      let m = Math.floor(timeLeft / 60);
+      let s = timeLeft % 60;
+      document.getElementById('countdown').textContent =
+        `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+      if(timeLeft <= 0){
+        clearInterval(countdownTimer);
+        alert('⏰ Time Up!');
+        return;
+      }
+      timeLeft--;
+    }
+    updateCountdown();
+    countdownTimer = setInterval(updateCountdown, 1000);
+  }
+</script>
+
+</body>
+</html>
